@@ -1,0 +1,78 @@
+# Greeting
+#echo "Welcome to Parrot OS"
+# Autoload zsh add-zsh-hook and vcs_info functions (-U autoload w/o substition, -z use zsh style)
+ autoload -Uz add-zsh-hook vcs_info
+ # Enable substitution in the prompt.
+ setopt prompt_subst
+ # Run vcs_info just before a prompt is displayed (precmd)
+ add-zsh-hook precmd vcs_info
+ # add ${vcs_info_msg_0} to the prompt
+ # e.g. here we add the Git information in red  
+ #PROMPT='%1~ %F{red}${vcs_info_msg_0_}%f %# '
+ 
+ # Enable checking for (un)staged changes, enabling use of %u and %c
+ zstyle ':vcs_info:*' check-for-changes true
+ # Set custom strings for an unstaged vcs repo changes (*) and staged changes (+)
+ zstyle ':vcs_info:*' unstagedstr ' *'
+ zstyle ':vcs_info:*' stagedstr ' +'
+ # Set the format of the Git information for vcs_info
+ zstyle ':vcs_info:git:*' formats       '(%b%u%c)'
+ zstyle ':vcs_info:git:*' actionformats '(%b|%a%u%c)'
+ #####################################################
+ RPROMPT='%F{92}${vcs_info_msg_0_}%f'
+###################################################                                                                                               
+  setopt autocd              # change directory just by typing its name                                                                             
+  #setopt correct            # auto correct mistakes                                                                                                
+  setopt interactivecomments # allow comments in interactive mode                                                                                   
+  setopt magicequalsubst     # enable filename expansion for arguments of the form ‘anything=expression’                                            
+  setopt nonomatch           # hide error message if there is no match for the pattern                                                              
+  setopt notify              # report the status of background jobs immediately                                                                     
+  setopt numericglobsort     # sort filenames numerically when it makes sense                                                                       
+  setopt promptsubst         # enable command substitution in prompt                                       
+# Prompt
+PROMPT="%F{red}┌[%f%F{cyan}%m%f%F{red}]─[%f%F{yellow}%D{%H:%M-%d/%m}%f%F{red}]─[%f%F{magenta}%d%f%F{red}]%f"$'\n'"%F{red}└╼%f%F{green}$USER%f%F{yellow}# %F{#A700FF}>%f"
+# Export PATH$
+export PATH=~/.local/bin:/snap/bin:/usr/sandbox/:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/share/games:/usr/local/sbin:/usr/sbin:/sbin:$PATH
+
+# alias
+alias ls='ls  --color=auto'
+alias dir='dir --color=auto'
+alias vdir='vdir --color=auto'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+#####################################################
+# Auto completion / suggestion
+# Mixing zsh-autocomplete and zsh-autosuggestions
+# Requires: zsh-autocomplete (custom packaging by Parrot Team)
+# Jobs: suggest files / foldername / histsory bellow the prompt
+# Requires: zsh-autosuggestions (packaging by Debian Team)
+# Jobs: Fish-like suggestion for command history
+source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+# Select all suggestion instead of top on result only
+zstyle ':autocomplete:tab:*' insert-unambiguous yes
+zstyle ':autocomplete:tab:*' widget-style menu-select
+zstyle ':autocomplete:*' min-input 2
+bindkey $key[Up] up-line-or-history
+bindkey $key[Down] down-line-or-history
+
+
+##################################################
+# Fish like syntax highlighting
+# Requires "zsh-syntax-highlighting" from apt
+source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# Save type history for completion and easier life
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt appendhistory
+
+# Useful alias for benchmarking programs
+# require install package "time" sudo apt install time
+# alias time="/usr/bin/time -f '\t%E real,\t%U user,\t%S sys,\t%K amem,\t%M mmem'"
+# Display last command interminal
+echo -en "\e]2;Parrot Terminal\a"
+preexec () { print -Pn "\e]0;$1 - Parrot Terminal\a" }
+
